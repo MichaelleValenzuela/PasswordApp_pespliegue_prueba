@@ -13,5 +13,6 @@ export const varsConfig = {
         APP_SERVER_NODEMAILER_USER_OAUTH2_CLIENT_SECRET: process.env.APP_SERVER_NODEMAILER_USER_OAUTH2_CLIENT_SECRET,
         APP_SERVER_NODEMAILER_USER_OAUTH2_REFRESH_TOKEN: process.env.APP_SERVER_NODEMAILER_USER_OAUTH2_REFRESH_TOKEN
     },
-    URI_USER: ["/register", "/confirm-account/:id", "/login"]
+    URI_USER: ["/register", "/confirm-account/:id", "/login", "/recovery", "/reset-password/:id"],
+    URI_RESOURCE: ["/create-resource", "/resources", "/resource/:id"]
 }

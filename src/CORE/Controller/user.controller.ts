@@ -3,120 +3,118 @@ import User from "../Model/auth.model"
 import { varsConfig } from "../../Helpers/varsConfig";
 import { transporterSendEmail } from "../../Helpers/nMailer"
 import { generateHashBcrypt, generateTokenUser } from "../../Helpers/generateHash";
+import { _FindAndActionAuthController } from "./_funController";
 
+export const registerUser = async (req: any, res: any, next: any) => {
 
-export const registerUser = async (req: any, res: any) => {
+    const { name, lastname, email, password, confirm_password, birth } = req.body;
 
-    const { name, lastname, username, email, password, confirm_password, birth } = req.body;
+    const data: any = { email: email.toLowerCase(), password: password };
 
-    const data: any = {
-        name: name,
-        lastname: lastname,
-        username: username,
-        email: email.toLowerCase(),
-        password: password,
-        birth: birth,
-        type_encrypt: "JWT (HS256-Alg)-Default",
-        role: "",
-        userActive: false
-    }
-
-    if (data.email.includes("admin" || "administrador")) {
-        data.role = "ADMINISTRADOR";
-    } else {
-        data.role = "USUARIO";
-    }
+    if (data.email.includes("admin" || "administrador")) data.role = "ADMINISTRADOR";
+    else data.role = "USUARIO";
 
     let arr_err: string[] = [];
-    for (let c in data) {
-        // console.log(`${data[c]}`);
 
-        if (typeof data.userActive !== "boolean") {
-            if (data[c].trim() === "") {
-                arr_err.push(`The field ${c} is required`);
-            }
-        }
+    for (let c in req.body) {
+        if (req.body[c].trim() === "") arr_err.push(`The field ${c} is required`);
     }
 
-    if (password !== confirm_password) {
-        arr_err.push(`The password must be the same`);
-    }
+    if (password !== confirm_password) arr_err.push(`The password must be the same`);
 
     if (arr_err.length > 0) {
         res.status(404).json({
             ok: false,
             errors: arr_err
-        })
+        });
     } else {
+        data.name = name;
+        data.lastname = lastname;
+        data.username = ""
+        data.birth = birth;
+        data.userActive = false;
+        data.type_encrypt = "JWT (HS256-Alg)-Default";
 
         const TOKEN_gen = generateTokenUser(data)
 
         data.token_confirm_account = TOKEN_gen;
 
-        const user = new User(data);
-        transporterSendEmail(data.email, `Hi ${name} ${lastname} please, confirm your account`, {
-            name: data.name,
-            lastname: data.lastname,
-            uriToken: `${varsConfig.HOST_FRONTEND}/confirm-account/${TOKEN_gen}`
-        });
+        await _FindAndActionAuthController("REGISTER", User, { email: email }, { req, res }, () => {
 
-        generateHashBcrypt("REGISTER", data.password, data, User, res);
+            transporterSendEmail(data.email, `Hi ${name} ${lastname} please, confirm your account`, {
+                name: data.name,
+                lastname: data.lastname,
+                uriToken: `${varsConfig.HOST_FRONTEND}/confirm-account/${TOKEN_gen}`
+            });
+
+            generateHashBcrypt("REGISTER", data.password, data, User, res);
+        });
     }
 }
 
-
 export const confirmAccount = async (req: any, res: any) => {
 
-    await User.findOne({ token_confirm_account: req.params.id }).exec().then((data) => {
-        if (!data) {
-            res.status(404).json({
-                ok: false,
-                msg: "There is not token exists for that user or already this account is activated"
-            })
-        } else {
-            if (!data.userActive) {
-                User.findOneAndUpdate({ token_confirm_account: req.params.id }, {
-                    token_confirm_account: "",
-                    userActive: true
-                }).exec().then((success) => {
-                    res.status(201).json({
-                        ok: true,
-                        msg: "This account is activated"
-                    });
-                });
-
-            } else {
-                res.status(404).json({
-                    ok: false,
-                    msg: "There is not token exists for that user or already this account is activated"
-                })
-            }
-        }
+    await _FindAndActionAuthController("CONFIRM", User, { token_confirm_account: req.params.id }, { req, res }, () => {
+        res.status(201).json({
+            ok: true,
+            msg: "NOW. This account is activated"
+        });
     });
 }
 
 export const loginUser = async (req: any, res: any) => {
-
     const { email, password } = req.body;
 
-    await User.findOne({ email: email, userActive: true }).exec().then((data) => {
-        if (!data) {
-            res.status(404).json({
-                ok: false,
-                msg: "The email does not exist or must be activated"
-            })
-        } else {
+    let arr_err: string[] = [];
 
-            const TOKEN_gen = generateTokenUser(JSON.parse(JSON.stringify(data)))
+    if (email.trim() === "" || password.trim() === "") arr_err.push(`All fields are required`);
 
-            const obj_data = {
-                ...JSON.parse(JSON.stringify(data)),
-                token_auth: TOKEN_gen
-            }
+    if (arr_err.length > 0) {
+        res.status(404).json({
+            ok: false,
+            errors: arr_err
+        });
+    } else {
+        await _FindAndActionAuthController("LOGIN", User, { email: email }, { req, res }, () => password);
+    }
+}
 
-            delete obj_data.__v;
+export const recoveryUser = async (req: any, res: any) => {
 
-            generateHashBcrypt("LOGIN", password, obj_data, null, res);
-        }
-    });
+    const { email } = req.body;
+
+    let arr_err: string[] = [];
+
+    if (email.trim() === "") arr_err.push(`The email field is required`);
+
+    if (arr_err.length > 0) {
+        res.status(404).json({
+            ok: false,
+            errors: arr_err
+        });
+    } else {
+
+        await _FindAndActionAuthController("RECOVERY", User, { email: email }, { req, res }, null);
+    }
+}
+
+export const resetPasswordUser = async (req: any, res: any) => {
+
+    const { new_password, confirm_password } = req.body;
+
+    let arr_err: string[] = [];
+
+    if (new_password.trim() === "") arr_err.push(`Field password are required`);
+
+    if (new_password !== confirm_password) arr_err.push(`The password must be the same`);
+
+    if (arr_err.length > 0) {
+        res.status(404).json({
+            ok: false,
+            errors: arr_err
+        });
+    } else {
+
+        await _FindAndActionAuthController("RESET", User, { token_confirm_account: req.params.id }, { req, res }, () => new_password);
+    }
 }

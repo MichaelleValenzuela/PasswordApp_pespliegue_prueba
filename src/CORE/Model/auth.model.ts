@@ -1,10 +1,9 @@
 import mongoose from "mongoose";
 
-
 const schema = new mongoose.Schema({
     name: String,
     lastname: String,
-    user: String,
+    username: String,
     email: String,
     password: String,
     birth: String,
@@ -12,7 +11,6 @@ const schema = new mongoose.Schema({
     role: String,
     token_confirm_account: String,
     userActive: Boolean
-
 });
 export default mongoose.model('User', schema);
 
