@@ -1,7 +1,7 @@
 import { decodeTokenUser } from "../../Helpers/generateHash";
 import User from "../Model/auth.model"
 import Resource from "../Model/resource.model"
-import { _FindAndActionResourceController } from "./_funController";
+import { _FindAndActionGETController } from "./_funController";
 
 
 const userWithToken = (req: any) => {
@@ -25,7 +25,7 @@ export const createResource = (req: any, res: any) => {
     } else {
         const decode: any = decodeTokenUser(req.headers.usuario_autorizacion);
 
-        _FindAndActionResourceController("BEFORE-SEARCH", User, { _id: decode._id }, { req, res }, () => {
+        _FindAndActionGETController("BEFORE-SEARCH", User, { _id: decode._id }, { req, res }, () => {
             const { type_resource } = req.body;
             // ....
         });
@@ -44,7 +44,7 @@ export const getResources = (req: any, res: any) => {
 
 
 
-        _FindAndActionResourceController("RESOURCES", Resource, {}, { req, res }, () => {
+        _FindAndActionGETController("RESOURCES", Resource, {}, { req, res }, () => {
             res.send("no existe modelo aún")
         });
 

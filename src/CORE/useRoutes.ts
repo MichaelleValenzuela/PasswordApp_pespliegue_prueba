@@ -3,7 +3,7 @@ import { decodeTokenUser } from "../Helpers/generateHash";
 import { varsConfig } from "../Helpers/varsConfig";
 import { createResource, getResources, getResourceById } from "./Controller/resources.controller";
 import {
-    registerUser, confirmAccount, loginUser, recoveryUser, resetPasswordUser
+    registerUser, confirmAccount, loginUser, recoveryUser, resetPasswordUser, getUsers
 } from "./Controller/user.controller";
 
 const authMiddleware = (req: any, res: any, next: any) => {
@@ -49,9 +49,10 @@ export const useRoutes = (app: any, router: any): Object => {
         USER_LOGIN: app.use(router.post(`${varsConfig.URI_USER[2]}`, loginUser)),
         RECOVERY_USER: app.use(router.post(`${varsConfig.URI_USER[3]}`, recoveryUser)),
         RESET_PASSWORD_USER: app.use(router.post(`${varsConfig.URI_USER[4]}`, resetPasswordUser)),
+        USERS: app.use(router.get(`${varsConfig.URI_USER[5]}`, authMiddleware, getUsers)),
 
         CREATE_RESOURCE: app.use(router.post(`${varsConfig.URI_RESOURCE[0]}`, authMiddleware, createResource)),
-        GET_RESOURCES: app.use(router.get(`${varsConfig.URI_RESOURCE[1]}`, authMiddleware, getResources)),
+        GET_RESOURCES: app.use(router.get(`${varsConfig.URI_RESOURCE[1]}`, getResources)),
         GET_RESOURCE_BY_ID: app.use(router.get(`${varsConfig.URI_RESOURCE[2]}`, getResourceById)),
     };
 }

@@ -3,7 +3,7 @@ import User from "../Model/auth.model"
 import { varsConfig } from "../../Helpers/varsConfig";
 import { transporterSendEmail } from "../../Helpers/nMailer"
 import { generateHashBcrypt, generateTokenUser } from "../../Helpers/generateHash";
-import { _FindAndActionAuthController } from "./_funController";
+import { _FindAndActionAuthController, _FindAndActionGETController } from "./_funController";
 
 export const registerUser = async (req: any, res: any, next: any) => {
 
@@ -44,7 +44,7 @@ export const registerUser = async (req: any, res: any, next: any) => {
             transporterSendEmail(data.email, `Hi ${name} ${lastname} please, confirm your account`, {
                 name: data.name,
                 lastname: data.lastname,
-                uriToken: `${varsConfig.HOST_FRONTEND}/confirm-account/${TOKEN_gen}`
+                uriToken: `${varsConfig.HOST_FRONTEND}/confirm/${TOKEN_gen}`
             });
 
             generateHashBcrypt("REGISTER", data.password, data, User, res);
@@ -100,13 +100,13 @@ export const recoveryUser = async (req: any, res: any) => {
 
 export const resetPasswordUser = async (req: any, res: any) => {
 
-    const { new_password, confirm_password } = req.body;
+    const { password, confirm_password } = req.body;
 
     let arr_err: string[] = [];
 
-    if (new_password.trim() === "") arr_err.push(`Field password are required`);
+    if (password.trim() === "") arr_err.push(`Field password are required`);
 
-    if (new_password !== confirm_password) arr_err.push(`The password must be the same`);
+    if (password !== confirm_password) arr_err.push(`The password must be the same`);
 
     if (arr_err.length > 0) {
         res.status(404).json({
@@ -115,6 +115,10 @@ export const resetPasswordUser = async (req: any, res: any) => {
         });
     } else {
 
-        await _FindAndActionAuthController("RESET", User, { token_confirm_account: req.params.id }, { req, res }, () => new_password);
+        await _FindAndActionAuthController("RESET", User, { token_confirm_account: req.params.id }, { req, res }, () => password);
     }
 }
+
+export const getUsers = async (req: any, res: any) => {
+    _FindAndActionGETController("USERS", User, { role: "USUARIO" }, { req, res }, null);
+}   
