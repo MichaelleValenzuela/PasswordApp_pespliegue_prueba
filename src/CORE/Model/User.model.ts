@@ -10,7 +10,8 @@ const schema = new mongoose.Schema({
     type_encrypt: String, // JWT (HS256-Alg)-Default
     role: String,
     token_confirm_account: String,
-    userActive: Boolean
+    userActive: Boolean,
+    userIsActiveByAdmin: Boolean
 });
 export default mongoose.model('User', schema);
 

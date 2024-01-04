@@ -1,10 +1,10 @@
-
-import { decodeTokenUser } from "../Helpers/generateHash";
 import { varsConfig } from "../Helpers/varsConfig";
-import { createResource, getResources, getResourceById } from "./Controller/resources.controller";
-import {
-    registerUser, confirmAccount, loginUser, recoveryUser, resetPasswordUser, getUsers
-} from "./Controller/user.controller";
+import { decodeTokenUser } from "../Helpers/generateHash";
+import { getUsers, desactivateUser, editProfileUser } from "../CORE/Controller/User.controller";
+import { registerUser, confirmAccount, loginUser, recoveryUser, resetPasswordUser } from "../CORE/Controller/Auth.controller";
+import { userCreateResource, userGetResources, userEditResource, userDeleteResource } from "../CORE/Controller/UserResource.controller";
+import { adminCreateResource, adminGetResources, adminEditResource, adminDeleteResource } from "../CORE/Controller/AdminResource.controller";
+
 
 const authMiddleware = (req: any, res: any, next: any) => {
 
@@ -44,15 +44,24 @@ const authMiddleware = (req: any, res: any, next: any) => {
 export const useRoutes = (app: any, router: any): Object => {
 
     return {
-        USER_REGISTER: app.use(router.post(`${varsConfig.URI_USER[0]}`, registerUser)),
-        CONFIRM_ACCOUNT: app.use(router.get(`${varsConfig.URI_USER[1]}`, confirmAccount)),
-        USER_LOGIN: app.use(router.post(`${varsConfig.URI_USER[2]}`, loginUser)),
-        RECOVERY_USER: app.use(router.post(`${varsConfig.URI_USER[3]}`, recoveryUser)),
-        RESET_PASSWORD_USER: app.use(router.post(`${varsConfig.URI_USER[4]}`, resetPasswordUser)),
-        USERS: app.use(router.get(`${varsConfig.URI_USER[5]}`, authMiddleware, getUsers)),
+        AUTH_REGISTER: app.use(router.post(`${varsConfig.URI_AUTH[0]}`, registerUser)),
+        AUTH_CONFIRM_ACCOUNT: app.use(router.get(`${varsConfig.URI_AUTH[1]}`, confirmAccount)),
+        AUTH_LOGIN: app.use(router.post(`${varsConfig.URI_AUTH[2]}`, loginUser)),
+        AUTH_RECOVERY: app.use(router.post(`${varsConfig.URI_AUTH[3]}`, recoveryUser)),
+        AUTH_RESET: app.use(router.post(`${varsConfig.URI_AUTH[4]}`, resetPasswordUser)),
 
-        CREATE_RESOURCE: app.use(router.post(`${varsConfig.URI_RESOURCE[0]}`, authMiddleware, createResource)),
-        GET_RESOURCES: app.use(router.get(`${varsConfig.URI_RESOURCE[1]}`, getResources)),
-        GET_RESOURCE_BY_ID: app.use(router.get(`${varsConfig.URI_RESOURCE[2]}`, getResourceById)),
+        USER_GET: app.use(router.get(`${varsConfig.URI_USER[0]}`, getUsers)),
+        USER_DESACTIVATE: app.use(router.put(`${varsConfig.URI_USER[1]}`, desactivateUser)),
+        USER_EDIT_PROFILE: app.use(router.put(`${varsConfig.URI_USER[2]}`, editProfileUser)),
+
+        ADMIN_CRETE_RESOURCE: app.use(router.post(`${varsConfig.URI_USER[0]}`, adminCreateResource)),
+        ADMIN_GET_RESOURCES: app.use(router.get(`${varsConfig.URI_USER[1]}`, adminGetResources)),
+        ADMIN_EDIT_RESOURCE: app.use(router.put(`${varsConfig.URI_USER[2]}`, adminEditResource)),
+        ADMIN_DELETE_RESOURCE: app.use(router.delete(`${varsConfig.URI_USER[3]}`, adminDeleteResource)),
+
+        USER_CRETE_RESOURCE: app.use(router.post(`${varsConfig.URI_USER[0]}`, userCreateResource)),
+        USER_GET_RESOURCES: app.use(router.get(`${varsConfig.URI_USER[1]}`, userGetResources)),
+        USER_EDIT_RESOURCE: app.use(router.put(`${varsConfig.URI_USER[2]}`, userEditResource)),
+        USER_DELETE_RESOURCE: app.use(router.delete(`${varsConfig.URI_USER[3]}`, userDeleteResource)),
     };
 }
