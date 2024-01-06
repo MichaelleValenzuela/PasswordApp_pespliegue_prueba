@@ -5,12 +5,13 @@ const schema = new mongoose.Schema({
         ref: "User",
         type: mongoose.Schema.Types.ObjectId
     },
-
-    name: String,
-    field: [{
-        type: String,
-        placeholder: String,
-    }],
-    type_resource: String
+    resource_admin_id: {
+        ref: "AdminResource",
+        type: mongoose.Schema.Types.ObjectId
+    },
+    fields: [{
+        name_field: String,
+        content_field: String
+    }]
 });
-export default mongoose.model('Resource', schema);
+export default mongoose.model('UserResource', schema);

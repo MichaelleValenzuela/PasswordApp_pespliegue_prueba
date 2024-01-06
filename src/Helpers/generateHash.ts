@@ -41,7 +41,7 @@ export const generateHashBcrypt = async (TYPE: string, text: string, data: any, 
             bcrypt.hash(text, SALT, async function (err, hash) {
                 User.findOneAndUpdate({ token_confirm_account: req.params.id }, {
                     token_confirm_account: hash,
-                }).exec().then((success:any) => {
+                }).exec().then((success: any) => {
                     res.status(201).json({
                         ok: true,
                         msg: "Password updated"

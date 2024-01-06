@@ -6,11 +6,11 @@ const schema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId
     },
 
-    name: String,
-    field: [{
-        type: String,
-        placeholder: String,
-    }],
-    type_resource: String
+    name_type: String,
+    
+    fields: [{
+        name_field: String,
+        type_field: String
+    }]
 });
 export default mongoose.model('AdminResource', schema);

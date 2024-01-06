@@ -50,20 +50,14 @@ export const registerUser = async (req: any, res: any) => {
 }
 
 export const confirmAccount = async (req: any, res: any) => {
-
     await User.findOne({ token_confirm_account: req.params.id }).exec().then((data: any) => {
         if (!data) res.status(404).json({ ok: false, msg: "No record found." })
         else {
             if (!data.userActive) {
                 User.findOneAndUpdate({ token_confirm_account: req.params.id }, {
-                    token_confirm_account: "",
-                    userActive: true
-                }).exec().then((success: any) => {
-                    res.status(201).json({ ok: true, msg: "NOW. This account is activated" });
-                });
-            } else {
-                res.status(404).json({ ok: false, msg: "This account is not activated" });
-            }
+                    token_confirm_account: "", userActive: true
+                }).exec().then((success: any) => res.status(201).json({ ok: true, msg: "NOW. This account is activated" }));
+            } else res.status(404).json({ ok: false, msg: "This account is not activated" });
         }
     });
 }
@@ -75,12 +69,8 @@ export const loginUser = async (req: any, res: any) => {
 
     if (email.trim() === "" || password.trim() === "") arr_err.push(`All fields are required`);
 
-    if (arr_err.length > 0) {
-        res.status(404).json({
-            ok: false,
-            errors: arr_err
-        });
-    } else {
+    if (arr_err.length > 0) res.status(404).json({ ok: false, errors: arr_err })
+    else {
         await User.findOne({ email: email }).exec().then((data: any) => {
             if (!data) res.status(404).json({ ok: false, msg: "No record found." })
             else {
@@ -95,12 +85,8 @@ export const loginUser = async (req: any, res: any) => {
                         delete obj_data.token_confirm_account;
                         generateHashBcrypt("LOGIN", password, obj_data, null, res);
                     }
-                    else {
-                        res.status(404).json({ ok: false, msg: "This account is not activated" });
-                    }
-                } else {
-                    res.status(404).json({ ok: false, msg: "This account has been disabled by the Admin" });
-                }
+                    else res.status(404).json({ ok: false, msg: "This account is not activated" });
+                } else res.status(404).json({ ok: false, msg: "This account has been disabled by the Admin" });
             }
         });
     }
@@ -136,11 +122,8 @@ export const recoveryUser = async (req: any, res: any) => {
                     });
                 });
 
-                if (!data.userActive) {
-                    res.status(404).json({ ok: false, msg: "This account is not activated. A message was sent to your email" });
-                } else {
-                    res.status(201).json({ ok: true, msg: "Message sent to reset password" });
-                }
+                if (!data.userActive) res.status(404).json({ ok: false, msg: "This account is not activated. A message was sent to your email" })
+                else res.status(201).json({ ok: true, msg: "Message sent to reset password" });
             }
         });
     }
@@ -156,26 +139,17 @@ export const resetPasswordUser = async (req: any, res: any) => {
 
     if (password !== confirm_password) arr_err.push(`The password must be the same`);
 
-    if (arr_err.length > 0) {
-        res.status(404).json({
-            ok: false,
-            errors: arr_err
-        });
-    } else {
+    if (arr_err.length > 0) res.status(404).json({ ok: false, errors: arr_err })
+    else {
         await User.findOne({ token_confirm_account: req.params.id }).exec().then((data: any) => {
             if (!data) res.status(404).json({ ok: false, msg: "No record found." })
             else {
                 if (data.userActive) {
                     bcrypt.hash(password, 10, async function (err, hash) {
-
-                        User.findOneAndUpdate({ token_confirm_account: req.params.id }, { token_confirm_account: "", password: hash }).exec().then((success: any) => {
-                            res.status(201).json({ ok: true, msg: "Password changed" });
-                        });
+                        User.findOneAndUpdate({ token_confirm_account: req.params.id }, { token_confirm_account: "", password: hash }).exec().then((success: any) => res.status(201).json({ ok: true, msg: "Password changed" }));
                     });
                 }
-                else {
-                    res.status(404).json({ ok: false, msg: "This account is not activated" });
-                }
+                else res.status(404).json({ ok: false, msg: "This account is not activated" });
             }
         });
     }
