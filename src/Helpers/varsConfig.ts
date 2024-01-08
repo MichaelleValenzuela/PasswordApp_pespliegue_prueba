@@ -3,7 +3,8 @@ import 'dotenv/config'
 export const varsConfig = {
     PORT_EXPRESS: 7000,
     HOST_FRONTEND: "http://localhost:5173",
-    ADRESS_MONGO: "mongodb://127.0.0.1:27017/app-password",
+    //ADRESS_MONGO: "mongodb://127.0.0.1:27017",
+    ADRESS_MONGO: "mongodb+srv://rootdraug:ufbL9vyu6N4pX4W0@cluster0.uaqdbx7.mongodb.net/",
     JWT_STR: "IÑDHASDASJDHLJSAHDJKSADHÑASJDHASDAÑHÑJÑJJKHJASDÑJÑASD",
 
     URI_AUTH: ["/auth/register", "/auth/confirm-account/:id", "/auth/login", "/auth/recovery",
