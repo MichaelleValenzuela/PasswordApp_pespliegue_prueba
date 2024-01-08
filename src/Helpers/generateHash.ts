@@ -24,7 +24,7 @@ export const generateHashBcrypt = async (TYPE: string, text: string, data: any, 
                 if (!result) {
                     res.status(404).json({
                         ok: true,
-                        msg: "Email or Password icorrect"
+                        msg: "Los datos ingresados son inválidos. Verifique y vuelva a intentar"
                     });
                 } else {
                     delete data.password;

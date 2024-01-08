@@ -9,9 +9,6 @@ const schema = new mongoose.Schema({
         ref: "AdminResource",
         type: mongoose.Schema.Types.ObjectId
     },
-    fields: [{
-        name_field: String,
-        content_field: String
-    }]
+    resource: {}
 });
 export default mongoose.model('UserResource', schema);

@@ -11,7 +11,7 @@ export const varsConfig = {
     URI_USER: ["/user/users", "/user/desactivate-user/:id", "/user/edit-profile/:id"],
     URI_ADMIN_RESOURCE: ["/admin/create-resource", "/admin/get-resources", "/admin/edit-resource/:id",
         "/admin/delete-resource/:id"],
-    URI_USER_RESOURCE: ["/user/create-resource", "/user/get-resources", "/user/edit-resource/:id",
+    URI_USER_RESOURCE: ["/user/create-resource", "/user/get-resources", "/user/get-resource/:id", "/user/edit-resource/:id",
         "/user/delete-resource/:id"],
 
     NODEMAILER_gmail_credential: {

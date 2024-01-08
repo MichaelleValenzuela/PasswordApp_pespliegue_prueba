@@ -4,7 +4,7 @@ import { varsConfig } from "../Helpers/varsConfig";
 import { decodeTokenUser } from "../Helpers/generateHash";
 import { getUsers, desactivateUser, editProfileUser } from "../CORE/Controller/User.controller";
 import { registerUser, confirmAccount, loginUser, recoveryUser, resetPasswordUser } from "../CORE/Controller/Auth.controller";
-import { userCreateResource, userGetResources, userEditResource, userDeleteResource } from "../CORE/Controller/UserResource.controller";
+import { userCreateResource, userGetResources, userEditResource, userDeleteResource, userGetResourceById } from "../CORE/Controller/UserResource.controller";
 import { adminCreateResource, adminGetResources, adminEditResource, adminDeleteResource } from "../CORE/Controller/AdminResource.controller";
 
 const authMiddleware = (req: any, res: any, next: any) => {
@@ -47,7 +47,8 @@ export const useRoutes = (app: any, router: any): Object => {
 
         USER_CRETE_RESOURCE: app.use(router.post(`${varsConfig.URI_USER_RESOURCE[0]}`, authMiddleware, userCreateResource)),
         USER_GET_RESOURCES: app.use(router.get(`${varsConfig.URI_USER_RESOURCE[1]}`, userGetResources)),
-        USER_EDIT_RESOURCE: app.use(router.put(`${varsConfig.URI_USER_RESOURCE[2]}`, userEditResource)),
-        USER_DELETE_RESOURCE: app.use(router.delete(`${varsConfig.URI_USER_RESOURCE[3]}`, userDeleteResource)),
+        USER_GET_RESOURCE_BY_ID: app.use(router.get(`${varsConfig.URI_USER_RESOURCE[2]}`, userGetResourceById)),
+        USER_EDIT_RESOURCE: app.use(router.put(`${varsConfig.URI_USER_RESOURCE[3]}`, userEditResource)),
+        USER_DELETE_RESOURCE: app.use(router.delete(`${varsConfig.URI_USER_RESOURCE[4]}`, userDeleteResource)),
     };
 }
